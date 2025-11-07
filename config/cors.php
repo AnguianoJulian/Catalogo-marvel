@@ -1,13 +1,14 @@
 <?php
 
 return [
+
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-    'http://localhost:4200',
-    'http://127.0.0.1:4200',
+        'https://catalogo-marvel-frontend2.onrender.com',
+        'http://localhost:4200' // ✅ para pruebas locales
     ],
 
     'allowed_origins_patterns' => [],
@@ -20,4 +21,3 @@ return [
 
     'supports_credentials' => false,
 ];
-

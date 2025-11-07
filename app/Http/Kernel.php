@@ -10,8 +10,13 @@ class Kernel extends HttpKernel
      * Middleware global (se ejecuta en todas las peticiones)
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \App\Http\Middleware\HandleCors::class, // Habilita CORS globalmente
+        // Verifica si el sitio está en mantenimiento
+        \App\Http\Middleware\TrustProxies::class,
+        \Illuminate\Http\Middleware\HandleCors::class, // ✅ Middleware correcto para CORS
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -19,21 +24,18 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            // Si no usas sesiones o cookies, puede quedar vacío
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
         'api' => [
-            \App\Http\Middleware\HandleCors::class, // <--- AGREGA ESTA LÍNEA AQUÍ
+            // ✅ No pongas aquí el HandleCors
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-    ];
-
-    /**
-     * Middleware individuales
-     */
-    protected $routeMiddleware = [
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
 }
