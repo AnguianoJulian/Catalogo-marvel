@@ -10,7 +10,7 @@ class Kernel extends HttpKernel
      * Middleware global
      */
     protected $middleware = [
-        \App\Http\Middleware\Cors::class, // 👈 Asegura que tu middleware se ejecute globalmente
+        \App\Http\Middleware\Cors::class, // <- ejecuta CORS siempre
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
     ];
 
@@ -19,7 +19,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            // Aquí iría el middleware de sesiones o cookies si lo usas
+            // si usas sesiones/cookies, agrega aquí
         ],
 
         'api' => [
@@ -29,7 +29,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * Middleware individuales (para rutas específicas)
+     * Middleware individuales (por ruta)
      */
     protected $routeMiddleware = [
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
@@ -37,7 +37,7 @@ class Kernel extends HttpKernel
     ];
 
     /**
-     * Soporte para proxies (Render usa proxy inverso)
+     * Proxies (útil en Render)
      */
     protected $proxies = '*';
 
