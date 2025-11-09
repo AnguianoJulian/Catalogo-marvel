@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
         'web' => [
             //
         ],
-
+        \App\Http\Middleware\Cors::class,
         'api' => [
             \Illuminate\Http\Middleware\HandleCors::class,
             'throttle:api',
