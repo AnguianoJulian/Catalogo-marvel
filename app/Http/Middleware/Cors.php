@@ -10,8 +10,8 @@ class Cors
     {
         $allowedOrigins = [
             'https://catalogo-marvel-frontend2.onrender.com',
-            'https://catalogo-marvel-frontend.vercel.app', // 👈 nuevo dominio
-            'http://localhost:4200', // para desarrollo local
+            'https://catalogo-marvel-frontend.vercel.app',
+            'http://localhost:4200',
         ];
 
         $origin = $request->headers->get('Origin');
@@ -19,8 +19,8 @@ class Cors
         if ($origin && in_array($origin, $allowedOrigins)) {
             header("Access-Control-Allow-Origin: $origin");
         } else {
-            // Si el origen no está permitido, podrías omitir el header o registrar un log
-            header("Access-Control-Allow-Origin: https://catalogo-marvel-frontend.vercel.app");
+            // No establezcas un dominio fijo aquí — mejor no enviar encabezado si no coincide
+            header("Access-Control-Allow-Origin: *");
         }
 
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
