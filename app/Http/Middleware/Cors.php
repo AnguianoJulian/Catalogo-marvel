@@ -11,7 +11,7 @@ class Cors
         $allowedOrigins = [
             'https://catalogo-marvel-frontend.vercel.app',
             'https://catalogo-marvel-frontend2.onrender.com',
-            'http://localhost:4200', // para desarrollo local
+            'http://localhost:4200',
         ];
 
         $origin = $request->headers->get('Origin');
@@ -19,7 +19,6 @@ class Cors
         if ($origin && in_array($origin, $allowedOrigins)) {
             header("Access-Control-Allow-Origin: $origin");
         } else {
-            // Si el origen no está en la lista, puedes usar '*' temporalmente
             header("Access-Control-Allow-Origin: *");
         }
 
