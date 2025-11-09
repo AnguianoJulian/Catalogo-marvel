@@ -9,9 +9,9 @@ class Cors
     public function handle($request, Closure $next)
     {
         $allowedOrigins = [
-            'https://catalogo-marvel-frontend.vercel.app', // 👈 dominio Vercel correcto
-            'https://catalogo-marvel-frontend2.onrender.com', // Render frontend anterior (por si acaso)
-            'http://localhost:4200', // desarrollo local
+            'https://catalogo-marvel-frontend.vercel.app',
+            'https://catalogo-marvel-frontend2.onrender.com',
+            'http://localhost:4200', // para desarrollo local
         ];
 
         $origin = $request->headers->get('Origin');
@@ -19,8 +19,8 @@ class Cors
         if ($origin && in_array($origin, $allowedOrigins)) {
             header("Access-Control-Allow-Origin: $origin");
         } else {
-            // Valor por defecto si no coincide ningún dominio
-            header("Access-Control-Allow-Origin: https://catalogo-marvel-frontend.vercel.app");
+            // Si el origen no está en la lista, puedes usar '*' temporalmente
+            header("Access-Control-Allow-Origin: *");
         }
 
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
