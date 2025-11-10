@@ -7,18 +7,25 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 class Kernel extends HttpKernel
 {
     /**
-     * Middleware global
+     * Global HTTP middleware stack.
+     *
+     * Estos middleware se ejecutan durante cada solicitud al sistema.
      */
     protected $middleware = [
+        // Middleware de Laravel por defecto
+        \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
+        // 🚀 Nuestro CORS personalizado
+        \App\Http\Middleware\Cors::class,
     ];
 
     /**
-     * Grupos de middleware
+     * Middleware groups.
      */
     protected $middlewareGroups = [
         'web' => [
@@ -31,38 +38,21 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \App\Http\Middleware\Cors::class, // 👈 Agregado para permitir tu dominio de Vercel
-            'throttle:api',
+            // throttle:60,1 → limita 60 solicitudes por minuto
+            'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
     /**
-     * Middleware individuales
+     * Route middleware.
+     *
+     * Estos middleware pueden asignarse a rutas individuales.
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-    ];
-
-    /**
-     * Soporte para proxies (Render usa proxy inverso)
-     */
-    protected $proxies = '*';
-
-    protected $headers = [
-        \Illuminate\Http\Request::HEADER_FORWARDED => null,
-        \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR => 'X_FORWARDED_FOR',
-        \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST => 'X_FORWARDED_HOST',
-        \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT => 'X_FORWARDED_PORT',
-        \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO => 'X_FORWARDED_PROTO',
     ];
 }
