@@ -7,11 +7,9 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance as Mi
 class PreventRequestsDuringMaintenance extends Middleware
 {
     /**
-     * Las rutas que deben estar disponibles durante el modo mantenimiento.
+     * The URIs that should be reachable while maintenance mode is enabled.
      *
      * @var array<int, string>
      */
-    protected $except = [
-        //
-    ];
+    protected $except = [];
 }

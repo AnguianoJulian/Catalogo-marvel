@@ -12,17 +12,14 @@ class Kernel extends HttpKernel
      * Estos middleware se ejecutan durante cada solicitud al sistema.
      */
     protected $middleware = [
-        // Middleware de Laravel por defecto
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-
-        // 🚀 Nuestro CORS personalizado
-        \App\Http\Middleware\Cors::class,
     ];
+
 
     /**
      * Middleware groups.
