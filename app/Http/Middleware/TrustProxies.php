@@ -8,20 +8,21 @@ use Illuminate\Http\Request;
 class TrustProxies extends Middleware
 {
     /**
-     * Los proxies de confianza.
+     * Los proxies confiables.
      *
-     * Render usa un proxy inverso, así que usamos '*'
+     * @var array|string|null
      */
     protected $proxies = '*';
 
     /**
-     * Los encabezados que deben ser confiables.
+     * Los encabezados que se deben usar para detectar proxies.
+     *
+     * @var int
      */
-    protected $headers = [
-        Request::HEADER_FORWARDED => null,
-        Request::HEADER_X_FORWARDED_FOR => 'X_FORWARDED_FOR',
-        Request::HEADER_X_FORWARDED_HOST => 'X_FORWARDED_HOST',
-        Request::HEADER_X_FORWARDED_PORT => 'X_FORWARDED_PORT',
-        Request::HEADER_X_FORWARDED_PROTO => 'X_FORWARDED_PROTO',
-    ];
+    protected $headers =
+        Request::HEADER_X_FORWARDED_FOR |
+        Request::HEADER_X_FORWARDED_HOST |
+        Request::HEADER_X_FORWARDED_PORT |
+        Request::HEADER_X_FORWARDED_PROTO |
+        Request::HEADER_X_FORWARDED_AWS_ELB;
 }

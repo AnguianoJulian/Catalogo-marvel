@@ -8,31 +8,17 @@ class Cors
 {
     public function handle($request, Closure $next)
     {
-        // Dominios permitidos
-        $allowedOrigins = [
-            'https://catalogo-marvel-frontend.vercel.app',
-            'https://catalogo-marvel-frontend2.onrender.com',
-            'http://localhost:4200',
-        ];
+        $response = $next($request);
 
-        $origin = $request->headers->get('Origin');
+        $response->headers->set('Access-Control-Allow-Origin', 'https://catalogo-marvel-frontend.vercel.app');
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
 
-        if ($origin && in_array($origin, $allowedOrigins)) {
-            header("Access-Control-Allow-Origin: {$origin}");
-        } else {
-            // Fallback mientras pruebas (puedes quitar el '*' en producción si quieres más control)
-            header("Access-Control-Allow-Origin: *");
+        if ($request->getMethod() == "OPTIONS") {
+            $response->setStatusCode(200);
         }
 
-        header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-CSRF-TOKEN");
-        header("Access-Control-Allow-Credentials: true");
-
-        // Responder a preflight
-        if ($request->getMethod() === "OPTIONS") {
-            return response()->json('OK', 200);
-        }
-
-        return $next($request);
+        return $response;
     }
 }
