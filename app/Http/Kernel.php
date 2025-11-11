@@ -8,18 +8,15 @@ class Kernel extends HttpKernel
 {
     /**
      * Global HTTP middleware stack.
-     *
-     * Estos middleware se ejecutan durante cada solicitud al sistema.
      */
     protected $middleware = [
         \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
+        \Illuminate\Http\Middleware\HandleCors::class, // <-- usar CORS integrado
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
-
 
     /**
      * Middleware groups.
@@ -35,7 +32,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // throttle:60,1 → limita 60 solicitudes por minuto
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
@@ -43,8 +39,6 @@ class Kernel extends HttpKernel
 
     /**
      * Route middleware.
-     *
-     * Estos middleware pueden asignarse a rutas individuales.
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
