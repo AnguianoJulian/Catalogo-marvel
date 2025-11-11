@@ -18,6 +18,10 @@ COPY . .
 # Instalar Composer (desde imagen oficial)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# 🔧 Crear carpetas necesarias antes de instalar dependencias
+RUN mkdir -p /var/www/html/bootstrap/cache /var/www/html/storage \
+    && chmod -R 777 /var/www/html/bootstrap/cache /var/www/html/storage
+
 # Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
@@ -37,7 +41,8 @@ RUN cp .env.example .env || true
 RUN php artisan key:generate || true
 
 # Establecer permisos correctos
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Exponer el puerto 80
 EXPOSE 80
