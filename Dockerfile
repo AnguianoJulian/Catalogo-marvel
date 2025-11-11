@@ -18,12 +18,23 @@ COPY . .
 # Instalar Composer (desde imagen oficial)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# 🔧 Crear carpetas necesarias antes de instalar dependencias
-RUN mkdir -p /var/www/html/bootstrap/cache /var/www/html/storage \
-    && chmod -R 777 /var/www/html/bootstrap/cache /var/www/html/storage
+# Crear las carpetas necesarias antes de instalar dependencias
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Dar permisos antes de ejecutar composer
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
+
+# Copiar el archivo .env si no existe
+RUN cp .env.example .env || true
+
+# Generar la clave de la aplicación
+RUN php artisan key:generate || true
+
+# 🔥 Crear enlace simbólico para el almacenamiento público
+RUN php artisan storage:link || true
 
 # Configurar Apache correctamente
 RUN echo '<VirtualHost *:80>\n\
@@ -34,15 +45,8 @@ RUN echo '<VirtualHost *:80>\n\
     </Directory>\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# Copiar el archivo .env si no existe
-RUN cp .env.example .env || true
-
-# Generar la clave de la aplicación
-RUN php artisan key:generate || true
-
-# Establecer permisos correctos
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+# Asegurar permisos correctos finales
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Exponer el puerto 80
 EXPOSE 80
