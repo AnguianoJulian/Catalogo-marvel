@@ -1,9 +1,31 @@
 services:
   - type: web
-    name: catalogo-marvel
-    env: php
-    buildCommand: |
-      composer install
-      php artisan key:generate
-      php artisan migrate --force
-    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    name: catalogo-marvel-2
+    env: docker
+    plan: free
+    region: oregon
+    buildCommand: ""
+    startCommand: "php artisan serve --host=0.0.0.0 --port=8000"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://catalogo-marvel-2.onrender.com
+      - key: ASSET_URL
+        value: https://catalogo-marvel-2.onrender.com
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: bkcuvc5bqlnlwndrlhyg-mysql.services.clever-cloud.com
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: bkcuvc5bqlnlwndrlhyg
+      - key: DB_USERNAME
+        value: uzlxutcjuey9rar8
+      - key: DB_PASSWORD
+        value: H4lRvDg0pyaRT53W8b13

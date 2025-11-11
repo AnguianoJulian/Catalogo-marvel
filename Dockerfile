@@ -1,55 +1,35 @@
-# Usa PHP con Apache
-FROM php:8.2-apache
+# ---------- Etapa base ----------
+FROM php:8.2-fpm
 
-# Instalar dependencias necesarias para Laravel
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    git zip unzip libpng-dev libonig-dev libxml2-dev curl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
-
-# Establecer el directorio de trabajo
-WORKDIR /var/www/html
-
-# Copiar el proyecto completo
-COPY . .
-
-# Instalar Composer (desde imagen oficial)
+# Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Crear las carpetas necesarias antes de instalar dependencias
-RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache
+# Configurar el directorio de trabajo
+WORKDIR /var/www/html
 
-# Dar permisos antes de ejecutar composer
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Copiar los archivos del proyecto
+COPY . .
 
-# Instalar dependencias de Laravel
+# Instalar dependencias de PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Copiar el archivo .env si no existe
-RUN cp .env.example .env || true
-
-# Generar la clave de la aplicación
-RUN php artisan key:generate || true
-
-# 🔥 Crear enlace simbólico para el almacenamiento público
+# Crear el enlace simbólico de storage
 RUN php artisan storage:link || true
 
-# Configurar Apache correctamente
-RUN echo '<VirtualHost *:80>\n\
-    DocumentRoot /var/www/html/public\n\
-    <Directory /var/www/html/public>\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+# Limpiar cachés y optimizar
+RUN php artisan config:clear && php artisan route:clear && php artisan cache:clear
+RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
-# Asegurar permisos correctos finales
+# Permisos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponer el puerto 80
-EXPOSE 80
+# Exponer el puerto 8000
+EXPOSE 8000
 
-# Iniciar Apache
-CMD ["apache2-foreground"]
+# Comando de inicio
+CMD php artisan serve --host=0.0.0.0 --port=8000
